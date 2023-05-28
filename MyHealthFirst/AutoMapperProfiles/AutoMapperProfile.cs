@@ -10,9 +10,11 @@ namespace MyHealthFirst.AutoMapperProfiles
         {
             public AutoMapperProfiles()
             {
-            
                 CreateMap<TrainerDTO, Trainer>();
                 CreateMap<ClientDTO, Client>();
+                CreateMap<MealDTO, Meal>();
+                CreateMap<NutricionistDTO, Nutricionist>();
+                CreateMap<DietDTO, Diet>();
             }
         }
     }

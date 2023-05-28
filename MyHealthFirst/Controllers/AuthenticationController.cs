@@ -66,8 +66,7 @@ namespace MyHealthFirst.Controllers
                             UserId = user.Id,
                             User = user,
                             Nombre = request.Name,
-                            Email = request.EmailAddress,
-                            Password = request.Password
+                            Email = request.EmailAddress
                             
                         };
                         _context.Clients.Add(cliente);
@@ -79,8 +78,7 @@ namespace MyHealthFirst.Controllers
                             UserId = user.Id,
                             User = user,
                             Nombre = request.Name,
-                            Email = request.EmailAddress,
-                            Password = request.Password
+                            Email = request.EmailAddress
                            
                         };
                         _context.Trainers.Add(entrenador);
@@ -92,8 +90,7 @@ namespace MyHealthFirst.Controllers
                             UserId = user.Id,
                             User = user,
                             Nombre = request.Name,
-                            Email = request.EmailAddress,
-                            Password = request.Password
+                            Email = request.EmailAddress
                             
                         };
                         _context.Nutricionists.Add(nutricionista);

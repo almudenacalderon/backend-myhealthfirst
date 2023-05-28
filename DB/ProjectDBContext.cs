@@ -15,7 +15,6 @@ namespace DB
         public DbSet<Trainer> Trainers { get; set; }
         public DbSet<Client> Clients { get; set; }
         public DbSet<Nutricionist> Nutricionists { get; set; }
-
         public DbSet<Training> Trainings { get; set; }
         public DbSet<Diet> Diets { get; set; }
         public DbSet<Exercise> Exercises { get; set; }

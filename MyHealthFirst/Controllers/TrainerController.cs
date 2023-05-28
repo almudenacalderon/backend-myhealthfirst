@@ -12,11 +12,10 @@ namespace MyHealthFirst.Controllers
     public class TrainerController : ControllerBase
     {
         private readonly ProjectDBContext _context;
-        private readonly IMapper _mapper;
-        public TrainerController(ProjectDBContext context, IMapper mapper)
+        public TrainerController(ProjectDBContext context)
         {
             _context = context;
-            _mapper = mapper;
+           
         }
    
         // GET: api/Trainer
@@ -72,19 +71,6 @@ namespace MyHealthFirst.Controllers
             }
 
             return NoContent();
-        }
-
-        // POST: api/Trainer
-        [HttpPost]
-        public async Task<ActionResult<Trainer>> PostTrainer(TrainerDTO trainerDTO)
-        {
-            var trainer = _mapper.Map<Trainer>(trainerDTO);
-
-           // trainer.FechaNacimiento = DateTime.ParseExact(trainer.FechaNacimiento.ToString("yyyy-MM-dd"), "yyyy-MM-dd", CultureInfo.InvariantCulture);
-            _context.Trainers.Add(trainer);
-            await _context.SaveChangesAsync();
-
-            return Ok();
         }
 
         // DELETE: api/Trainer/5

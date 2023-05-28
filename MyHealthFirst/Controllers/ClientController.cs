@@ -1,14 +1,12 @@
-﻿
-using AutoMapper;
+﻿using AutoMapper;
 using DB;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MyHealthFirst.DTOs;
-using System.Globalization;
 
 namespace MyHealthFirst.Controllers
 {
-    [Route("api")]
+    [Route("api/[controller]")]
     [ApiController]
     public class ClientController : ControllerBase
     {
@@ -20,7 +18,7 @@ namespace MyHealthFirst.Controllers
             _mapper = mapper;
         }
         // GET: api/Client
-        [HttpGet("[controller]")]
+        [HttpGet]
         public async Task<ActionResult<IEnumerable<Client>>> GetClients()
         {
             if (_context.Clients == null)
@@ -31,7 +29,7 @@ namespace MyHealthFirst.Controllers
         }
 
         // GET: api/Client/5
-        [HttpGet("[controller]/{id}")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<Client>> GetClient(int id)
         {
             var client = await _context.Clients
@@ -48,12 +46,47 @@ namespace MyHealthFirst.Controllers
         }
 
         // PUT: api/Client/5
-        [HttpPut("[controller]/{id}")]
-        public async Task<IActionResult> PutClient(int id, Client client)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutClient(int id, ClientDTO updatedClient)
         {
-            if (id != client.Id)
+            var client = await _context.Clients
+               .Include(c => c.Trainer)
+               .Include(c => c.Nutricionist)
+               .FirstOrDefaultAsync(c => c.Id == id);
+
+            if (client == null)
             {
-                return BadRequest();
+                return NotFound();
+            }
+
+            client.Nombre = updatedClient.Nombre;
+            client.PhoneNumber = updatedClient.PhoneNumber;
+            client.Email = updatedClient.Email;
+            client.Peso = updatedClient.Peso;
+            client.Altura = updatedClient.Altura;
+            client.FechaNacimiento = updatedClient.FechaNacimiento;
+            client.Fecha_asignacion_dieta = updatedClient.Fecha_asignacion_dieta;
+            client.Fecha_asignacion_entrenamiento = updatedClient.Fecha_asignacion_entrenamiento;
+
+            if (updatedClient.TrainerId.HasValue)
+            {
+                // Obtener el entrenador correspondiente al ID proporcionado
+                var trainer = await _context.Trainers.FindAsync(updatedClient.TrainerId.Value);
+                if (trainer != null)
+                {
+                    client.Trainer = trainer; // Asignar el entrenador al cliente
+                    trainer.ClientId = client.Id; // Asignar el ID del cliente al campo clienteId del entrenador
+                }
+            }
+            if (updatedClient.NutricionistId.HasValue)
+            {
+                // Obtener el entrenador correspondiente al ID proporcionado
+                var nutricionist = await _context.Nutricionists.FindAsync(updatedClient.NutricionistId.Value);
+                if (nutricionist != null)
+                {
+                    client.Nutricionist = nutricionist; // Asignar el entrenador al cliente
+                    nutricionist.ClientId = client.Id; // Asignar el ID del cliente al campo clienteId del nutricionista
+                }
             }
 
             _context.Entry(client).State = EntityState.Modified;
@@ -77,26 +110,8 @@ namespace MyHealthFirst.Controllers
             return NoContent();
         }
 
-        // POST: api/Client
-        [HttpPost("[controller]")]
-        public async Task<ActionResult<Client>> PostClient(ClientDTO clientDTO)
-        {
-            var yaExisteCliente = await _context.Clients.AnyAsync(c => c.Email == clientDTO.Email);
-
-            if (yaExisteCliente)
-            {
-                return BadRequest("Ya existe un cliente con este email" + clientDTO.Email);
-            }
-            var client = _mapper.Map<Client>(clientDTO);
-
-            _context.Clients.Add(client);
-            await _context.SaveChangesAsync();
-
-            return Ok();
-        }
-
         // DELETE: api/Client/5
-        [HttpDelete("[controller]/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteClient(int id)
         {
             if (_context.Clients == null)
@@ -104,9 +119,23 @@ namespace MyHealthFirst.Controllers
                 return NotFound();
             }
             var client = await _context.Clients.FindAsync(id);
+
             if (client == null)
             {
                 return NotFound();
+            }
+            // Obtener el entrenador asociado al cliente
+            var trainer = await _context.Trainers.FirstOrDefaultAsync(t => t.ClientId == id);
+            if (trainer != null)
+            {
+                trainer.ClientId = null; // Eliminar la asociación con el cliente
+            }
+
+            // Obtener el nutricionista asociado al cliente
+            var nutricionist = await _context.Nutricionists.FirstOrDefaultAsync(n => n.ClientId == id);
+            if (nutricionist != null)
+            {
+                nutricionist.ClientId = null; // Eliminar la asociación con el cliente
             }
 
             _context.Clients.Remove(client);
