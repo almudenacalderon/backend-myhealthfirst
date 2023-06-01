@@ -1,6 +1,10 @@
-﻿using DB;
+﻿using AutoMapper;
+using DB;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using MyHealthFirst.DTOs;
+using System.Security.Claims;
 
 namespace MyHealthFirst.Controllers
 {
@@ -9,9 +13,11 @@ namespace MyHealthFirst.Controllers
     public class NutricionistController : ControllerBase
     {
         private readonly ProjectDBContext _context;
-        public NutricionistController(ProjectDBContext context)
+        private readonly IMapper _mapper;
+        public NutricionistController(ProjectDBContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: api/Nutricionist
@@ -22,14 +28,17 @@ namespace MyHealthFirst.Controllers
             {
                 return NotFound();
             }
-            return await _context.Nutricionists.ToListAsync();
+            return await _context.Nutricionists.Include(n => n.Diets).Include(n => n.Clients).ToListAsync();
         }
 
         // GET: api/Nutricionist/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Nutricionist>> GetNutricionist(int id)
         {
-            var nutricionist = await _context.Nutricionists.FindAsync(id);
+            var nutricionist = await _context.Nutricionists
+                .Include(n => n.Diets)
+                .Include(n => n.Clients)
+                .FirstOrDefaultAsync(n => n.Id == id);
 
             if (nutricionist == null)
             {
@@ -41,32 +50,30 @@ namespace MyHealthFirst.Controllers
 
         // PUT: api/Nutricionist/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutNutricionist(int id, Nutricionist nutricionist)
+        public async Task<IActionResult> PutNutricionist(int id, NutricionistDTO nutricionistDTO)
         {
-            if (id != nutricionist.Id)
+            //var nutricionist = _mapper.Map<Nutricionist>(nutricionistDTO);
+           
+            var nutricionist = await _context.Nutricionists
+               .Include(n => n.Diets)
+               .Include(n => n.Clients)
+               .FirstOrDefaultAsync(n=> n.Id == id);
+
+            if (nutricionist == null)
             {
-                return BadRequest();
+                return NotFound();
             }
 
+            nutricionist.Nombre = nutricionistDTO.Nombre;
+            nutricionist.PhoneNumber = nutricionistDTO.PhoneNumber;
+            nutricionist.Email = nutricionistDTO.Email;
+            nutricionist.FechaNacimiento = nutricionistDTO.FechaNacimiento;
+           
             _context.Entry(nutricionist).State = EntityState.Modified;
+           
+            await _context.SaveChangesAsync();
+            return Ok();
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!NutricionistExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
         }
 
         // DELETE: api/Nutricionist/5
@@ -77,11 +84,15 @@ namespace MyHealthFirst.Controllers
             {
                 return NotFound();
             }
-            var nutricionist = await _context.Nutricionists.FindAsync(id);
+            var nutricionist = await _context.Nutricionists
+                .Include(n => n.Diets)
+               .FirstOrDefaultAsync(n => n.Id == id);
+             
             if (nutricionist == null)
             {
                 return NotFound();
             }
+           
 
             _context.Nutricionists.Remove(nutricionist);
             await _context.SaveChangesAsync();
@@ -89,10 +100,7 @@ namespace MyHealthFirst.Controllers
             return NoContent();
         }
 
-        private bool NutricionistExists(int id)
-        {
-            return (_context.Nutricionists?.Any(e => e.Id == id)).GetValueOrDefault();
-        }
+        
     }
 }
 

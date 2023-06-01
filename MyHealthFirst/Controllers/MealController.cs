@@ -46,10 +46,10 @@ namespace MyHealthFirst.Controllers
 
         // POST api/<MealController>
         [HttpPost]
-        public async Task<ActionResult<Meal>> PostMeal(MealDTO mealDTO)
+        public async Task<ActionResult<Meal>> PostMeal(int DietId, MealDTO mealDTO)
         {
             var meal = _mapper.Map<Meal>(mealDTO);
-
+            meal.DietId = DietId;
             // trainer.FechaNacimiento = DateTime.ParseExact(trainer.FechaNacimiento.ToString("yyyy-MM-dd"), "yyyy-MM-dd", CultureInfo.InvariantCulture);
             _context.Meals.Add(meal);
             await _context.SaveChangesAsync();

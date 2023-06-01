@@ -4,16 +4,16 @@
     {
         public int Id { get; set; }
         public string Nombre { get; set; } = null!;
-        public string Desayuno { get; set; }
-        public string Comida { get; set; }
-        public string Media_mañana { get; set; }
-        public string Cena { get; set; }
-        public string Merienda { get; set; }
+        public string Desayuno { get; set; } = null!;
+        public string Comida { get; set; } = null!;
+        public string Media_mañana { get; set; } = null!;
+        public string Cena { get; set; } = null!;
+        public string Merienda { get; set; } = null!;
         public string ? Otros { get; set; }
         public string ? Post_entreno { get; set; }
         public string? Pre_entreno { get; set; }
-        public int? DietId { get; set; }
-        public List<Diet>? Diets { get; set; } = new List<Diet>();
+        public int DietId { get; set; }
+        public Diet Diet { get; set; } = null!;
        
     }
 }

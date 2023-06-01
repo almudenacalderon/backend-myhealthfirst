@@ -68,27 +68,6 @@ namespace MyHealthFirst.Controllers
             client.Fecha_asignacion_dieta = updatedClient.Fecha_asignacion_dieta;
             client.Fecha_asignacion_entrenamiento = updatedClient.Fecha_asignacion_entrenamiento;
 
-            if (updatedClient.TrainerId.HasValue)
-            {
-                // Obtener el entrenador correspondiente al ID proporcionado
-                var trainer = await _context.Trainers.FindAsync(updatedClient.TrainerId.Value);
-                if (trainer != null)
-                {
-                    client.Trainer = trainer; // Asignar el entrenador al cliente
-                    trainer.ClientId = client.Id; // Asignar el ID del cliente al campo clienteId del entrenador
-                }
-            }
-            if (updatedClient.NutricionistId.HasValue)
-            {
-                // Obtener el entrenador correspondiente al ID proporcionado
-                var nutricionist = await _context.Nutricionists.FindAsync(updatedClient.NutricionistId.Value);
-                if (nutricionist != null)
-                {
-                    client.Nutricionist = nutricionist; // Asignar el entrenador al cliente
-                    nutricionist.ClientId = client.Id; // Asignar el ID del cliente al campo clienteId del nutricionista
-                }
-            }
-
             _context.Entry(client).State = EntityState.Modified;
 
             try
@@ -124,20 +103,7 @@ namespace MyHealthFirst.Controllers
             {
                 return NotFound();
             }
-            // Obtener el entrenador asociado al cliente
-            var trainer = await _context.Trainers.FirstOrDefaultAsync(t => t.ClientId == id);
-            if (trainer != null)
-            {
-                trainer.ClientId = null; // Eliminar la asociación con el cliente
-            }
-
-            // Obtener el nutricionista asociado al cliente
-            var nutricionist = await _context.Nutricionists.FirstOrDefaultAsync(n => n.ClientId == id);
-            if (nutricionist != null)
-            {
-                nutricionist.ClientId = null; // Eliminar la asociación con el cliente
-            }
-
+            
             _context.Clients.Remove(client);
             await _context.SaveChangesAsync();
 

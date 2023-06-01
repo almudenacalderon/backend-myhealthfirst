@@ -13,8 +13,7 @@ namespace DB
         public string? PhoneNumber { get; set; }
         public DateTime? FechaNacimiento { get; set; }
         public string Email { get; set; } = null!;
-        public int? ClientId { get; set; }
         public List<Client>? Clients { get; set; } = new List<Client>();
-        public List<Diet> Diets { get; set; } = new List<Diet>();
+        public List<Diet>? Diets { get; set; } = new List<Diet>();
     }
 }

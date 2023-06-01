@@ -12,9 +12,7 @@ namespace DB
         public string? PhoneNumber { get; set; }
         public DateTime? FechaNacimiento { get; set; }
         public string Email { get; set; } = null!;
-        public int? ClientId { get; set; }
         public  List<Client>? Clients { get; set; } = new List<Client>();
-        public int? TrainingId { get; set; }
         public List<Training>? Training { get; set; } = new List<Training>();
     }
 }

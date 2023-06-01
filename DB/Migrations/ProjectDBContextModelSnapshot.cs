@@ -74,7 +74,7 @@ namespace DB.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Clients");
+                    b.ToTable("Clients", (string)null);
                 });
 
             modelBuilder.Entity("DB.Diet", b =>
@@ -85,19 +85,18 @@ namespace DB.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("MealId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Nombre")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("NutricionistId")
+                    b.Property<int>("NutricionistId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Diets");
+                    b.HasIndex("NutricionistId");
+
+                    b.ToTable("Diets", (string)null);
                 });
 
             modelBuilder.Entity("DB.Exercise", b =>
@@ -118,14 +117,9 @@ namespace DB.Migrations
                     b.Property<int>("Set")
                         .HasColumnType("int");
 
-                    b.Property<int>("TrainingId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("TrainingId");
-
-                    b.ToTable("Exercises");
+                    b.ToTable("Exercises", (string)null);
                 });
 
             modelBuilder.Entity("DB.Meal", b =>
@@ -148,7 +142,7 @@ namespace DB.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("DietId")
+                    b.Property<int>("DietId")
                         .HasColumnType("int");
 
                     b.Property<string>("Media_mañana")
@@ -174,7 +168,9 @@ namespace DB.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Meals");
+                    b.HasIndex("DietId");
+
+                    b.ToTable("Meals", (string)null);
                 });
 
             modelBuilder.Entity("DB.Nutricionist", b =>
@@ -185,12 +181,6 @@ namespace DB.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("ClientId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("DietId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -213,7 +203,7 @@ namespace DB.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Nutricionists");
+                    b.ToTable("Nutricionists", (string)null);
                 });
 
             modelBuilder.Entity("DB.Trainer", b =>
@@ -224,9 +214,6 @@ namespace DB.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("ClientId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -241,9 +228,6 @@ namespace DB.Migrations
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("TrainingId")
-                        .HasColumnType("int");
-
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -252,7 +236,7 @@ namespace DB.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Trainers");
+                    b.ToTable("Trainers", (string)null);
                 });
 
             modelBuilder.Entity("DB.Training", b =>
@@ -263,49 +247,31 @@ namespace DB.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("ExerciseId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Nombre")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("TrainerId")
+                    b.Property<int>("TrainerId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Trainings");
+                    b.ToTable("Trainings", (string)null);
                 });
 
-            modelBuilder.Entity("DietMeal", b =>
+            modelBuilder.Entity("ExerciseTraining", b =>
                 {
-                    b.Property<int>("DietsId")
+                    b.Property<int>("ExercisesId")
                         .HasColumnType("int");
 
-                    b.Property<int>("MealsId")
+                    b.Property<int>("TrainingsId")
                         .HasColumnType("int");
 
-                    b.HasKey("DietsId", "MealsId");
+                    b.HasKey("ExercisesId", "TrainingsId");
 
-                    b.HasIndex("MealsId");
+                    b.HasIndex("TrainingsId");
 
-                    b.ToTable("DietMeal");
-                });
-
-            modelBuilder.Entity("DietNutricionist", b =>
-                {
-                    b.Property<int>("DietsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("NutricionistsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("DietsId", "NutricionistsId");
-
-                    b.HasIndex("NutricionistsId");
-
-                    b.ToTable("DietNutricionist");
+                    b.ToTable("ExerciseTraining", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -522,7 +488,7 @@ namespace DB.Migrations
 
                     b.HasIndex("TrainingId");
 
-                    b.ToTable("TrainerTraining");
+                    b.ToTable("TrainerTraining", (string)null);
                 });
 
             modelBuilder.Entity("DB.Client", b =>
@@ -548,15 +514,26 @@ namespace DB.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("DB.Exercise", b =>
+            modelBuilder.Entity("DB.Diet", b =>
                 {
-                    b.HasOne("DB.Training", "Training")
-                        .WithMany("Exercises")
-                        .HasForeignKey("TrainingId")
+                    b.HasOne("DB.Nutricionist", "Nutricionists")
+                        .WithMany("Diets")
+                        .HasForeignKey("NutricionistId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Training");
+                    b.Navigation("Nutricionists");
+                });
+
+            modelBuilder.Entity("DB.Meal", b =>
+                {
+                    b.HasOne("DB.Diet", "Diet")
+                        .WithMany("Meals")
+                        .HasForeignKey("DietId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Diet");
                 });
 
             modelBuilder.Entity("DB.Nutricionist", b =>
@@ -581,32 +558,17 @@ namespace DB.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("DietMeal", b =>
+            modelBuilder.Entity("ExerciseTraining", b =>
                 {
-                    b.HasOne("DB.Diet", null)
+                    b.HasOne("DB.Exercise", null)
                         .WithMany()
-                        .HasForeignKey("DietsId")
+                        .HasForeignKey("ExercisesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("DB.Meal", null)
+                    b.HasOne("DB.Training", null)
                         .WithMany()
-                        .HasForeignKey("MealsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("DietNutricionist", b =>
-                {
-                    b.HasOne("DB.Diet", null)
-                        .WithMany()
-                        .HasForeignKey("DietsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DB.Nutricionist", null)
-                        .WithMany()
-                        .HasForeignKey("NutricionistsId")
+                        .HasForeignKey("TrainingsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -677,19 +639,21 @@ namespace DB.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("DB.Diet", b =>
+                {
+                    b.Navigation("Meals");
+                });
+
             modelBuilder.Entity("DB.Nutricionist", b =>
                 {
                     b.Navigation("Clients");
+
+                    b.Navigation("Diets");
                 });
 
             modelBuilder.Entity("DB.Trainer", b =>
                 {
                     b.Navigation("Clients");
-                });
-
-            modelBuilder.Entity("DB.Training", b =>
-                {
-                    b.Navigation("Exercises");
                 });
 #pragma warning restore 612, 618
         }

@@ -6,8 +6,7 @@
         public string Nombre { get; set; } = null!;
         public int Set { get; set; }
         public int Repeticiones { get; set; }
-        public int TrainingId { get; set; }
-        public Training Training { get; set; } = null!;
+        public List<Training> Trainings { get; set; } = new List<Training>();
 
     }
 }
