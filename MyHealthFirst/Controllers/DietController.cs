@@ -25,13 +25,15 @@ namespace MyHealthFirst.Controllers
             {
                 return NotFound();
             }
-            return await _context.Diets.ToListAsync();
+            return await _context.Diets.Include(d => d.Meals).ToListAsync();
         }
         // GET api/<DietController>/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Diet>> GetDiet(int id)
         {
-            var diet = await _context.Diets.FindAsync(id);
+            var diet = await _context.Diets
+                .Include(d => d.Meals)
+                .FirstOrDefaultAsync(d=> d.Id == id);
 
             if (diet == null)
             {
@@ -57,14 +59,20 @@ namespace MyHealthFirst.Controllers
 
         // PUT api/<DietController>/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutDiet(int id, Diet diet)
+        public async Task<IActionResult> PutDiet(int id, DietDTO dietDTO)
         {
-            if (id != diet.Id)
-            {
-                return BadRequest();
-            }
+            var diet = await _context.Diets
+               .Include(d=> d.Nutricionists)
+               .Include(d => d.Meals)
+               .FirstOrDefaultAsync(d => d.Id == id);
 
-            _context.Entry(diet).State = EntityState.Modified;
+            if (diet == null)
+            {
+                return NotFound();
+            }
+            _mapper.Map(dietDTO, diet);
+
+            _context.Entry(dietDTO).State = EntityState.Modified;
 
             try
             {
@@ -93,7 +101,10 @@ namespace MyHealthFirst.Controllers
             {
                 return NotFound();
             }
-            var diet = await _context.Diets.FindAsync(id);
+            var diet = await _context.Diets
+              .Include(n => n.Meals)
+              .FirstOrDefaultAsync(n => n.Id == id);
+
             if (diet == null)
             {
                 return NotFound();

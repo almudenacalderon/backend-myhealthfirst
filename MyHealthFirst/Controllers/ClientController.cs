@@ -25,7 +25,7 @@ namespace MyHealthFirst.Controllers
             {
                 return NotFound();
             }
-            return await _context.Clients.ToListAsync();
+            return await _context.Clients.Include(c => c.Trainer).Include(c => c.Nutricionist).ToListAsync();
         }
 
         // GET: api/Client/5
@@ -59,14 +59,7 @@ namespace MyHealthFirst.Controllers
                 return NotFound();
             }
 
-            client.Nombre = updatedClient.Nombre;
-            client.PhoneNumber = updatedClient.PhoneNumber;
-            client.Email = updatedClient.Email;
-            client.Peso = updatedClient.Peso;
-            client.Altura = updatedClient.Altura;
-            client.FechaNacimiento = updatedClient.FechaNacimiento;
-            client.Fecha_asignacion_dieta = updatedClient.Fecha_asignacion_dieta;
-            client.Fecha_asignacion_entrenamiento = updatedClient.Fecha_asignacion_entrenamiento;
+            _mapper.Map(updatedClient, client);
 
             _context.Entry(client).State = EntityState.Modified;
 

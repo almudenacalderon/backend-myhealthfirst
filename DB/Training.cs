@@ -6,6 +6,7 @@
         public string Nombre { get; set; } = null!;
         public List<Exercise> Exercises { get; set; } = new List<Exercise>();
         public int TrainerId { get; set; }
-        public List<Trainer> Trainers { get; set; } = new List<Trainer>();
+        public Trainer Trainer { get; set; } = null!;
+        public string? Comentarios { get; set; }
     }
 }

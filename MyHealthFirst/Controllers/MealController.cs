@@ -59,14 +59,19 @@ namespace MyHealthFirst.Controllers
 
         // PUT api/<MealController>/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutMeal(int id, Meal meal)
+        public async Task<IActionResult> PutMeal(int id, MealDTO mealDTO)
         {
-            if (id != meal.Id)
-            {
-                return BadRequest();
-            }
+            var meal = await _context.Meals
+               .Include(m => m.Diet)
+               .FirstOrDefaultAsync(m => m.Id == id);
 
-            _context.Entry(meal).State = EntityState.Modified;
+            if (meal == null)
+            {
+                return NotFound();
+            }
+            _mapper.Map(mealDTO, meal);
+
+            _context.Entry(mealDTO).State = EntityState.Modified;
 
             try
             {

@@ -52,7 +52,6 @@ namespace MyHealthFirst.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutNutricionist(int id, NutricionistDTO nutricionistDTO)
         {
-            //var nutricionist = _mapper.Map<Nutricionist>(nutricionistDTO);
            
             var nutricionist = await _context.Nutricionists
                .Include(n => n.Diets)
@@ -64,11 +63,8 @@ namespace MyHealthFirst.Controllers
                 return NotFound();
             }
 
-            nutricionist.Nombre = nutricionistDTO.Nombre;
-            nutricionist.PhoneNumber = nutricionistDTO.PhoneNumber;
-            nutricionist.Email = nutricionistDTO.Email;
-            nutricionist.FechaNacimiento = nutricionistDTO.FechaNacimiento;
-           
+            _mapper.Map(nutricionistDTO, nutricionist);
+
             _context.Entry(nutricionist).State = EntityState.Modified;
            
             await _context.SaveChangesAsync();
@@ -92,7 +88,6 @@ namespace MyHealthFirst.Controllers
             {
                 return NotFound();
             }
-           
 
             _context.Nutricionists.Remove(nutricionist);
             await _context.SaveChangesAsync();

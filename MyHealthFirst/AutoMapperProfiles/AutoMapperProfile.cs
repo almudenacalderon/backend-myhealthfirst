@@ -15,6 +15,11 @@ namespace MyHealthFirst.AutoMapperProfiles
                 CreateMap<MealDTO, Meal>();
                 CreateMap<NutricionistDTO, Nutricionist>();
                 CreateMap<DietDTO, Diet>();
+                //como en entrenamiento tenemos en la clase una lista de ejercicios y en el dto un listado de enteros tengo que mapear
+                //ese dato concreto para que me convierta el entero a ejercicio
+                CreateMap<TrainingDTO, Training>().ForMember(ent => ent.Exercises, dto =>
+                dto.MapFrom(campo => campo.Exercises.Select(id => new Exercise { Id = id })));
+                CreateMap<ExerciseDTO, Exercise>();
             }
         }
     }

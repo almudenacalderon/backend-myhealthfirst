@@ -12,12 +12,13 @@ namespace MyHealthFirst.Controllers
     public class TrainerController : ControllerBase
     {
         private readonly ProjectDBContext _context;
-        public TrainerController(ProjectDBContext context)
+        private readonly IMapper _mapper;
+        public TrainerController(ProjectDBContext context, IMapper mapper)
         {
             _context = context;
-           
+            _mapper = mapper;
         }
-   
+
         // GET: api/Trainer
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Trainer>>> GetTrainers()
@@ -26,14 +27,18 @@ namespace MyHealthFirst.Controllers
             {
                 return NotFound();
             }
-            return await _context.Trainers.ToListAsync();
+            //añadir entrenos 
+            return await _context.Trainers.Include(t => t.Trainings).Include(t => t.Clients).ToListAsync();
         }
 
         // GET: api/Trainer/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Trainer>> GetTrainer(int id)
         {
-            var trainer = await _context.Trainers.FindAsync(id);
+            var trainer = await _context.Trainers
+                .Include(t => t.Trainings)
+                .Include(t => t.Clients)
+                .FirstOrDefaultAsync(n => n.Id == id);
 
             if (trainer == null)
             {
@@ -45,12 +50,19 @@ namespace MyHealthFirst.Controllers
 
         // PUT: api/Trainer/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutTrainer(int id, Trainer trainer)
+        public async Task<IActionResult> PutTrainer(int id, TrainerDTO trainerDTO)
         {
-            if (id != trainer.Id)
+            var trainer = await _context.Trainers
+               .Include(t => t.Trainings)
+               .Include(t => t.Clients)
+               .FirstOrDefaultAsync(n => n.Id == id);
+
+            if (trainer == null)
             {
-                return BadRequest();
+                return NotFound();
             }
+
+            _mapper.Map(trainerDTO, trainer);
 
             _context.Entry(trainer).State = EntityState.Modified;
 
@@ -81,7 +93,10 @@ namespace MyHealthFirst.Controllers
             {
                 return NotFound();
             }
-            var trainer = await _context.Trainers.FindAsync(id);
+            var trainer = await _context.Trainers
+                .Include(t => t.Trainings)
+               .FirstOrDefaultAsync(n => n.Id == id);
+
             if (trainer == null)
             {
                 return NotFound();

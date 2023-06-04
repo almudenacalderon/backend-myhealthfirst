@@ -13,6 +13,6 @@ namespace DB
         public DateTime? FechaNacimiento { get; set; }
         public string Email { get; set; } = null!;
         public  List<Client>? Clients { get; set; } = new List<Client>();
-        public List<Training>? Training { get; set; } = new List<Training>();
+        public List<Training>? Trainings { get; set; } = new List<Training>();
     }
 }

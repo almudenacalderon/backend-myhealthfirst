@@ -11,5 +11,6 @@
         public string? Otros { get; set; }
         public string? Post_entreno { get; set; }
         public string? Pre_entreno { get; set; }
+        public int DietId { get; set; }
     }
 }

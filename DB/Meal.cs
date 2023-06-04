@@ -14,6 +14,7 @@
         public string? Pre_entreno { get; set; }
         public int DietId { get; set; }
         public Diet Diet { get; set; } = null!;
-       
+        public string? Comentarios { get; set; }
+
     }
 }

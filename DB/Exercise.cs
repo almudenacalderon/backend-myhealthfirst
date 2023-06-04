@@ -7,6 +7,7 @@
         public int Set { get; set; }
         public int Repeticiones { get; set; }
         public List<Training> Trainings { get; set; } = new List<Training>();
+        public string ?Comentarios { get; set; }
 
     }
 }
