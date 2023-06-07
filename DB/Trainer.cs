@@ -14,5 +14,6 @@ namespace DB
         public string Email { get; set; } = null!;
         public  List<Client>? Clients { get; set; } = new List<Client>();
         public List<Training>? Trainings { get; set; } = new List<Training>();
+        public string Role { get; set; } = null!;
     }
 }

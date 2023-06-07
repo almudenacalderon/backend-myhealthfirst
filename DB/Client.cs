@@ -21,6 +21,7 @@ namespace DB
         public Trainer? Trainer { get; set; }
         public int? NutricionistId { get; set; }
         public Nutricionist? Nutricionist { get; set; } 
-       
+        public string Role{ get; set; } = null!;
+
     }
 }
