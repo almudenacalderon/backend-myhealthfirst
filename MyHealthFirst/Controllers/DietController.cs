@@ -45,11 +45,12 @@ namespace MyHealthFirst.Controllers
 
         // POST api/<DietController>
         [HttpPost]
-        public async Task<ActionResult<Diet>> PostDiet(int NutricionistId, DietDTO dietDTO)
+        public async Task<ActionResult<Diet>> PostDiet(int NutricionistId, int ClientId, DietDTO dietDTO)
         {
 
             var diet = _mapper.Map<Diet>(dietDTO);
             diet.NutricionistId = NutricionistId;
+            diet.ClientId = ClientId;
             // trainer.FechaNacimiento = DateTime.ParseExact(trainer.FechaNacimiento.ToString("yyyy-MM-dd"), "yyyy-MM-dd", CultureInfo.InvariantCulture);
             _context.Diets.Add(diet);
             await _context.SaveChangesAsync();
@@ -59,7 +60,7 @@ namespace MyHealthFirst.Controllers
 
         // PUT api/<DietController>/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutDiet(int id, DietDTO dietDTO)
+        public async Task<IActionResult> PutDiet(int id, int ClientId, DietDTO dietDTO)
         {
             var diet = await _context.Diets
                .Include(d=> d.Nutricionists)
@@ -71,6 +72,7 @@ namespace MyHealthFirst.Controllers
                 return NotFound();
             }
             _mapper.Map(dietDTO, diet);
+            diet.ClientId = ClientId;
 
             _context.Entry(dietDTO).State = EntityState.Modified;
 

@@ -27,7 +27,8 @@ namespace MyHealthFirst.Controllers
             {
                 return NotFound();
             }
-            return await _context.Exercises.ToListAsync();
+            return await _context.Exercises.Include(e=>e.Trainings).ToListAsync();
+   
         }
 
         // GET: api/Exercise/5

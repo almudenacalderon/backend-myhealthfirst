@@ -46,10 +46,11 @@ namespace MyHealthFirst.Controllers
                 return training;
             }
         [HttpPost]
-        public async Task<ActionResult> Post(int TrainerId, TrainingDTO trainingDTO)
+        public async Task<ActionResult> Post(int TrainerId, int ClientId, TrainingDTO trainingDTO)
         {
             var training = _mapper.Map<Training>(trainingDTO);
             training.TrainerId = TrainerId;
+            training.ClientId = ClientId;
 
             if (training.Exercises is not null)
             {
@@ -67,7 +68,7 @@ namespace MyHealthFirst.Controllers
 
         // PUT: api/Training/5
         [HttpPut("{id}")]
-            public async Task<IActionResult> PutTraining(int id, TrainingDTO trainingDTO)
+            public async Task<IActionResult> PutTraining(int id, int ClientId, TrainingDTO trainingDTO)
             {
 
                 var training = await _context.Trainings
@@ -81,8 +82,9 @@ namespace MyHealthFirst.Controllers
                 }
 
                 _mapper.Map(trainingDTO, training);
+                training.ClientId = ClientId;
 
-                _context.Entry(training).State = EntityState.Modified;
+               _context.Entry(training).State = EntityState.Modified;
 
                 await _context.SaveChangesAsync();
                 return Ok();

@@ -8,5 +8,6 @@
         public int NutricionistId { get; set; }
         public Nutricionist Nutricionists { get; set; } = null!;
         public string? Comentarios { get; set; }
+        public int? ClientId { get; set; }
     }
 }

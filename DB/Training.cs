@@ -8,5 +8,6 @@
         public int TrainerId { get; set; }
         public Trainer Trainer { get; set; } = null!;
         public string? Comentarios { get; set; }
+        public int ClientId { get; set; }
     }
 }
