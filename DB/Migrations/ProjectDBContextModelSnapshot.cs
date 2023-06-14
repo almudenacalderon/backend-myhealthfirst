@@ -78,7 +78,7 @@ namespace DB.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Clients");
+                    b.ToTable("Clients", (string)null);
                 });
 
             modelBuilder.Entity("DB.Diet", b =>
@@ -106,7 +106,7 @@ namespace DB.Migrations
 
                     b.HasIndex("NutricionistId");
 
-                    b.ToTable("Diets");
+                    b.ToTable("Diets", (string)null);
                 });
 
             modelBuilder.Entity("DB.Exercise", b =>
@@ -132,7 +132,7 @@ namespace DB.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Exercises");
+                    b.ToTable("Exercises", (string)null);
                 });
 
             modelBuilder.Entity("DB.Meal", b =>
@@ -186,7 +186,7 @@ namespace DB.Migrations
 
                     b.HasIndex("DietId");
 
-                    b.ToTable("Meals");
+                    b.ToTable("Meals", (string)null);
                 });
 
             modelBuilder.Entity("DB.Nutricionist", b =>
@@ -223,7 +223,7 @@ namespace DB.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Nutricionists");
+                    b.ToTable("Nutricionists", (string)null);
                 });
 
             modelBuilder.Entity("DB.Trainer", b =>
@@ -260,7 +260,7 @@ namespace DB.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Trainers");
+                    b.ToTable("Trainers", (string)null);
                 });
 
             modelBuilder.Entity("DB.Training", b =>
@@ -288,7 +288,7 @@ namespace DB.Migrations
 
                     b.HasIndex("TrainerId");
 
-                    b.ToTable("Trainings");
+                    b.ToTable("Trainings", (string)null);
                 });
 
             modelBuilder.Entity("ExerciseTraining", b =>
@@ -303,7 +303,7 @@ namespace DB.Migrations
 
                     b.HasIndex("TrainingsId");
 
-                    b.ToTable("ExerciseTraining");
+                    b.ToTable("ExerciseTraining", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
