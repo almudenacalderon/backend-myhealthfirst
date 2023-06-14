@@ -18,7 +18,8 @@ namespace MyHealthFirst.AutoMapperProfiles
                 //como en entrenamiento tenemos en la clase una lista de ejercicios y en el dto un listado de enteros tengo que mapear
                 //ese dato concreto para que me convierta el entero a ejercicio
                 CreateMap<TrainingDTO, Training>().ForMember(ent => ent.Exercises, dto =>
-                dto.MapFrom(campo => campo.Exercises.Select(id => new Exercise { Id = id })));
+                dto.MapFrom(campo => campo.Exercises.Select(id => new Exercise { Id = id })))
+                    .ForMember(dest => dest.Trainer, opt => opt.Ignore());
                 CreateMap<ExerciseDTO, Exercise>();
             }
         }

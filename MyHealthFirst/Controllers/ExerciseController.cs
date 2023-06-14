@@ -77,10 +77,11 @@ namespace MyHealthFirst.Controllers
             }
 
             _context.Update(exercise);
-           
+
             await _context.SaveChangesAsync();
             return Ok();
         }
+ 
 
         // DELETE: api/Training/5
         [HttpDelete("{id}")]

@@ -45,7 +45,7 @@ namespace MyHealthFirst.Controllers
 
                 return training;
             }
-        [HttpPost]
+        [HttpPost("{TrainerId}/{ClientId}")]
         public async Task<ActionResult> Post(int TrainerId, int ClientId, TrainingDTO trainingDTO)
         {
             var training = _mapper.Map<Training>(trainingDTO);
@@ -68,31 +68,38 @@ namespace MyHealthFirst.Controllers
 
         // PUT: api/Training/5
         [HttpPut("{id}")]
-            public async Task<IActionResult> PutTraining(int id, int ClientId, TrainingDTO trainingDTO)
+            public async Task<IActionResult> PutTraining(int id, TrainingDTO trainingDTO)
             {
 
-                var training = await _context.Trainings
-                   .Include(t => t.Trainer)
-                   .Include(t => t.Exercises)
-                   .FirstOrDefaultAsync(n => n.Id == id);
+            var training = await _context.Trainings
+                  .Include(t => t.Trainer)
+                  .Include(t => t.Exercises)
+                  .FirstOrDefaultAsync(n => n.Id == id);
 
-                if (training == null)
-                {
-                    return NotFound();
-                }
-
-                _mapper.Map(trainingDTO, training);
-                training.ClientId = ClientId;
-
-               _context.Entry(training).State = EntityState.Modified;
-
-                await _context.SaveChangesAsync();
-                return Ok();
-
+            if (training == null)
+            {
+                return NotFound();
             }
 
-            // DELETE: api/Training/5
-            [HttpDelete("{id}")]
+            // Mapear las propiedades del DTO al Training existente
+            _mapper.Map(trainingDTO, training);
+            training.ClientId = trainingDTO.ClientId;
+            // Obtener los Ids de los Exercises recibidos en el DTO
+            var exerciseIds = trainingDTO.Exercises;
+
+            // Actualizar la relación muchos a muchos con los Exercises
+            training.Exercises = await _context.Exercises
+                .Where(e => exerciseIds.Contains(e.Id))
+                .ToListAsync();
+
+            // Guardar los cambios en la base de datos
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        // DELETE: api/Training/5
+        [HttpDelete("{id}")]
             public async Task<IActionResult> DeleteTraining(int id)
             {
                 if (_context.Trainings == null)
