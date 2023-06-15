@@ -1,5 +1,6 @@
 ﻿using DB;
 using DB.Auth;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +8,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using MyHealthFirst.Configuration;
 using MyHealthFirst.DTOs;
+using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -155,6 +157,54 @@ namespace MyHealthFirst.Controllers
 
             var token = GenerateToken(existingUser); 
             return Ok(new AuthResult { Token = token, Result = true });
+        }
+        [HttpPost("ChangeEmail")]
+        public async Task<IActionResult> ChangeEmail([FromBody] ChangeEmailRequestDto request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            // Obtener el usuario por su ID (userId)
+            var user = await _userManager.FindByIdAsync(request.UserId);
+
+            // Verificar si el nuevo correo electrónico ya está siendo utilizado por otro usuario
+            var emailExists = await _userManager.FindByEmailAsync(request.NewEmail);
+            if (emailExists != null && emailExists.Id != user.Id)
+            {
+                return BadRequest(new AuthResult()
+                {
+                    Result = false,
+                    Errors = new List<string>()
+            {
+                "El correo electrónico ya está en uso"
+            }
+                });
+            }
+
+            // Actualizar el correo electrónico del usuario
+            user.Email = request.NewEmail;
+            user.UserName = request.NewEmail;
+            var updateResult = await _userManager.UpdateAsync(user);
+            if (!updateResult.Succeeded)
+            {
+                var errors = new List<string>();
+                foreach (var error in updateResult.Errors)
+                {
+                    errors.Add(error.Description);
+                }
+                return BadRequest(new AuthResult()
+                {
+                    Result = false,
+                    Errors = errors
+                });
+            }
+
+            return Ok(new AuthResult()
+            {
+                Result = true
+            });
         }
         private string GenerateToken(IdentityUser user)
         {
